@@ -1,0 +1,11 @@
+.tippy {
+	&-content {
+		line-height: 1;
+		padding: 0 !important;
+	}
+
+	&-box {
+		max-width: max-content !important;
+		background-color: transparent !important;
+	}
+}
