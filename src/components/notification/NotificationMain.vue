@@ -1,34 +1,32 @@
 <script lang="ts" setup>
 import { useNotificationStore } from '@/store/notification.ts'
 import { storeToRefs } from 'pinia'
-import { NotificationCase, NotificationItem as NotificationItemType } from '@/types/notification.ts'
 
 const notificationStore = useNotificationStore()
 const {
 	filterCases,
 	activeSort,
-	notifications,
-	filteredNotifications
+	filteredNotifications,
+	needFetch
 } = storeToRefs(notificationStore)
 
-await notificationStore.getNotificationFilterCases()
-await notificationStore.getNotifications()
-
-const updateActiveSort = (item: NotificationCase): void => {
-	activeSort.value = item
+const refreshNotifications = async (): void => {
+	await notificationStore.getNotificationFilterCases()
+	await notificationStore.getNotifications()
+	
+	notificationStore.updateActiveSort(null)
 }
 
-const updateNotificationItem = (item: NotificationItemType): void => {
-	notifications.value = notifications.value.map((notification: NotificationItemType) => {
-		return item.id === notification.id ? item : notification
-	})
+if (needFetch.value) {
+	await notificationStore.getNotificationFilterCases()
+	await notificationStore.getNotifications()
 }
 </script>
 
 <template>
 	<div class="notification-main">
 		<div class="notification-main__counter text-12-reg">
-			Показано 7 изменений
+			Показано {{ filteredNotifications?.length }} изменений
 		</div>
 		
 		<div class="notification-main__actions">
@@ -37,13 +35,13 @@ const updateNotificationItem = (item: NotificationItemType): void => {
 					:modal-value="activeSort"
 					:items="filterCases"
 					placeholder="Тип уведомления"
-					@update:model-value="updateActiveSort"
+					@update:model-value="notificationStore.updateActiveSort"
 				/>
 				
 				<div
 					v-if="activeSort"
 					class="notification-main__actions-sort-cancel"
-					@click="activeSort = null"
+					@click="notificationStore.updateActiveSort(null)"
 				>
 					Сбросить
 				</div>
@@ -54,7 +52,7 @@ const updateNotificationItem = (item: NotificationItemType): void => {
 					name="update"
 					size="large"
 					class="notification-main__actions-reload-icon"
-					@click="notificationStore.getNotifications"
+					@click="refreshNotifications"
 				/>
 			</div>
 		</div>
@@ -65,7 +63,7 @@ const updateNotificationItem = (item: NotificationItemType): void => {
 				:key="`notification-item_${item.id}_${index}`"
 				:item="item"
 				:cases="filterCases"
-				@update:item="updateNotificationItem"
+				@update:item="notificationStore.updateNotificationItem(item)"
 			/>
 		</div>
 	</div>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { NotificationCase, NotificationCaseCode, NotificationItem } from '@/types/notification.ts'
+import { NotificationCase, NotificationItem } from '@/types/notification.ts'
 import { computed } from 'vue'
-import { iconColors, iconNames } from '@/helpers/icon.ts'
+import { notificationInfo } from '@/helpers/notification.ts'
 
 const props = withDefaults(defineProps<{
 	item?: NotificationItem | null
@@ -13,17 +13,11 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{ (e: 'update:item', item: NotificationItem): void }>()
 
 const getInfo = computed(() => {
-	const currentCase = props.cases.find((item: NotificationCase) => item.id === props.item.case )
-	
-	return {
-		iconName: iconNames[currentCase?.code ?? NotificationCaseCode.NEW_CATEGORY],
-		iconColor: iconColors[currentCase?.code ?? NotificationCaseCode.NEW_CATEGORY],
-		label: currentCase?.description ?? ''
-	}
+	return notificationInfo(props.item, props.cases)
 })
 
 const updateItem = (): void => {
-	emit('update:item', { ...props.item, unread: !props.item.unread })
+	emit('update:item', props.item)
 }
 </script>
 
