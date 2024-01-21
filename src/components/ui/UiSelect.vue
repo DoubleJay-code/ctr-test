@@ -2,7 +2,7 @@
 import { useTippy } from 'vue-tippy'
 import { computed, h, ref, watch } from 'vue'
 import UiDropdown from '@/components/ui/UiDropdown.vue'
-import { NotificationCase } from '@/types/notification.cases.ts'
+import { NotificationCase } from '@/types/notification.ts'
 
 const props = withDefaults(defineProps<{
 	modalValue?: NotificationCase | null

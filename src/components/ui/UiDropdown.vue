@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NotificationCase } from '@/types/notification.cases.ts'
+import { NotificationCase } from '@/types/notification.ts'
 
 const props = withDefaults(defineProps<{
 	items?: NotificationCase[]
