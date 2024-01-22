@@ -30,13 +30,12 @@ const getInfo = computed(() => {
 			</div>
 			
 			<div class="notifications-detail-page__actions">
-				<ui-button to="/notifications">
-					Назад
-				</ui-button>
+				<ui-button to="/notifications" text="Назад" />
 				
-				<ui-button @click="notificationStore.updateNotificationItem(currentNotification)">
-					{{ currentNotification.unread ? 'Прочитать' : 'Отметить непрочитанным' }}
-				</ui-button>
+				<ui-button
+					@click="notificationStore.updateNotificationItem(currentNotification)"
+					:text="currentNotification.unread ? 'Прочитать' : 'Отметить непрочитанным'"
+				/>
 			</div>
 			
 			<div class="notifications-detail-page__card">
@@ -49,12 +48,14 @@ const getInfo = computed(() => {
 					
 					<h2>{{ getInfo.label }}</h2>
 					
-					<div
-						v-if="currentNotification.unread"
-						class="notifications-detail-page__card-info-new text-12-reg"
-					>
-						Новое
-					</div>
+					<transition name="unread" mode="out-in">
+						<div
+							v-if="currentNotification.unread"
+							class="notifications-detail-page__card-info-new text-12-reg"
+						>
+							Новое
+						</div>
+					</transition>
 				</div>
 				
 				<div class="notifications-detail-page__card-description text-12-reg">
@@ -82,6 +83,15 @@ const getInfo = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+
+.unread-enter-active,
+.unread-leave-active {
+	transition: opacity 0.3s ease-in-out;
+}
+.unread-enter-from,
+.unread-leave-to {
+	opacity: 0;
+}
 
 .notifications-detail-page {
 	display: flex;

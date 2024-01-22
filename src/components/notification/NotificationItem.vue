@@ -42,9 +42,7 @@ const updateItem = (): void => {
 		</router-link>
 		
 		<div class="notification-item__action" @click="updateItem">
-			<ui-button>
-				{{ item.unread ? 'Прочитать' : 'Отметить непрочитанным' }}
-			</ui-button>
+			<ui-button :text="item.unread ? 'Прочитать' : 'Отметить непрочитанным'" />
 		</div>
 	</div>
 </template>

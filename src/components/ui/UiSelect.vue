@@ -46,16 +46,30 @@ watch(tippyState, () => {
 </script>
 
 <template>
-  <div ref="select" class="ui-select" :class="{ 'ui-select--active': props.modalValue }">
-	  <div class="text-14-reg ui-select__placeholder">
-		  {{ getPlaceholder }}
-	  </div>
-	  
-	  <ui-svg name="arrow" size="small" class="ui-select__icon" />
-  </div>
+	<div ref="select" class="ui-select" :class="{ 'ui-select--active': props.modalValue }">
+		<transition
+			name="select-placeholder"
+			mode="out-in"
+		>
+			<div class="text-14-reg ui-select__placeholder" :key="getPlaceholder">
+				{{ getPlaceholder }}
+			</div>
+		</transition>
+		
+		<ui-svg name="arrow" size="small" class="ui-select__icon" />
+	</div>
 </template>
 
 <style lang="scss" scoped>
+
+.select-placeholder-enter-active,
+.select-placeholder-leave-active {
+	transition: opacity 0.4s ease;
+}
+.select-placeholder-enter-from,
+.select-placeholder-leave-to {
+	opacity: 0;
+}
 
 .ui-select {
 	display: inline-flex;

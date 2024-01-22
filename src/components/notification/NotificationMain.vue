@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useNotificationStore } from '@/store/notification.ts'
 import { storeToRefs } from 'pinia'
+import gsap from 'gsap'
 
 const notificationStore = useNotificationStore()
 const {
@@ -9,6 +10,29 @@ const {
 	filteredNotifications,
 	needFetch
 } = storeToRefs(notificationStore)
+
+const onBeforeEnter = (el) => {
+	el.style.opacity = 0
+	el.style.height = 0
+}
+
+const onEnter = (el, done) => {
+	gsap.to(el, {
+		opacity: 1,
+		height: 80,
+		delay: el.dataset.index * 0.05,
+		onComplete: done
+	})
+}
+
+const onLeave = (el, done) => {
+	gsap.to(el, {
+		opacity: 0,
+		height: 0,
+		delay: el.dataset.index * 0.05,
+		onComplete: done
+	})
+}
 
 const refreshNotifications = async (): void => {
 	await notificationStore.getNotificationFilterCases()
@@ -26,7 +50,15 @@ if (needFetch.value) {
 <template>
 	<div class="notification-main">
 		<div class="notification-main__counter text-12-reg">
-			Показано {{ filteredNotifications?.length }} изменений
+			<span>Показано </span>
+			
+			<transition name="counter" mode="out-in">
+					<span :key="filteredNotifications?.length">
+						{{ filteredNotifications?.length }}
+					</span>
+			</transition>
+			
+			<span> изменений</span>
 		</div>
 		
 		<div class="notification-main__actions">
@@ -38,13 +70,15 @@ if (needFetch.value) {
 					@update:model-value="notificationStore.updateActiveSort"
 				/>
 				
-				<div
-					v-if="activeSort"
-					class="notification-main__actions-sort-cancel"
-					@click="notificationStore.updateActiveSort(null)"
-				>
-					Сбросить
-				</div>
+				<transition name="counter" mode="out-in">
+					<div
+						v-if="activeSort"
+						class="notification-main__actions-sort-cancel"
+						@click="notificationStore.updateActiveSort(null)"
+					>
+						Сбросить
+					</div>
+				</transition>
 			</div>
 			
 			<div class="notification-main__actions-reload">
@@ -57,19 +91,35 @@ if (needFetch.value) {
 			</div>
 		</div>
 		
-		<div class="notification-main__list">
+		<transition-group
+			tag="div"
+			class="notification-main__list"
+			@before-enter="onBeforeEnter"
+			@enter="onEnter"
+			@leave="onLeave"
+		>
 			<notification-item
 				v-for="(item, index) in filteredNotifications"
 				:key="`notification-item_${item.id}_${index}`"
 				:item="item"
 				:cases="filterCases"
+				:data-index="index"
 				@update:item="notificationStore.updateNotificationItem(item)"
 			/>
-		</div>
+		</transition-group>
 	</div>
 </template>
 
 <style lang="scss" scoped>
+
+.counter-enter-active,
+.counter-leave-active {
+	transition: opacity 0.4s ease-in-out;
+}
+.counter-enter-from,
+.counter-leave-to {
+	opacity: 0;
+}
 
 .notification-main {
 	display: flex;

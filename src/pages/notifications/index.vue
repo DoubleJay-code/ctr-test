@@ -3,28 +3,48 @@ import NotificationMain from '@/components/notification/NotificationMain.vue'
 </script>
 
 <template>
-	<suspense>
-		<template #default>
-			<div class="notifications-page">
-				<h1>Уведомления</h1>
-				
-				<notification-main />
-			</div>
-		</template>
-		
-		<template #fallback>
-			<div class="notifications-page">
-				<h1>Уведомления</h1>
-				
-				<div class="notifications-page__loader text-14-reg">
-					Загрузка...
+	<transition name="route-transition" appear>
+		<suspense>
+			<template #default>
+				<div class="notifications-page">
+					<h1>Уведомления</h1>
+					
+					<notification-main />
 				</div>
-			</div>
-		</template>
-	</suspense>
+			</template>
+			
+			<template #fallback>
+				<div class="notifications-page">
+					<h1>Уведомления</h1>
+					
+					<div class="notifications-page__loader text-14-reg">
+						Загрузка...
+					</div>
+				</div>
+			</template>
+		</suspense>
+	</transition>
 </template>
 
 <style lang="scss" scoped>
+
+.route-transition-enter-active {
+	animation: route-animation 1s;
+}
+
+.route-transition-leave-active {
+	animation: route-animation 1s reverse;
+}
+
+@keyframes route-animation {
+	0% {
+		opacity: 0;
+	}
+	
+	100% {
+		opacity: 1;
+	}
+}
 
 .notifications-page {
 	display: flex;
